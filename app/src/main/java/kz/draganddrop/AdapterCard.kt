@@ -1,6 +1,7 @@
 package kz.draganddrop
 
 import android.content.ClipData
+import android.content.res.Resources
 import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +17,8 @@ import kz.draganddrop.utils.CustomDragShadowBuilder
 import kz.draganddrop.utils.RecyclerViewItemClickCallback
 
 class AdapterCard(
-    private val recyclerViewItemClickCallback: RecyclerViewItemClickCallback
+    private val recyclerViewItemClickCallback: RecyclerViewItemClickCallback,
+    private val recyclerView: RecyclerView
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val diffCallback = object : DiffUtil.ItemCallback<CombinedItem>() {
@@ -102,7 +104,6 @@ class AdapterCard(
                 val item = differ.currentList[position]
                 val dragData: ClipData
                 val localState: Any
-
                 when (item) {
                     is CombinedItem.CardItem -> {
                         item.card.isBeingDragged = true
@@ -173,6 +174,14 @@ class AdapterCard(
                         true
                     }
 
+                    DragEvent.ACTION_DRAG_LOCATION -> {
+                        val viewHolder = recyclerView.findViewHolderForAdapterPosition(adapterPosition)
+                        viewHolder?.let {
+                            scrollRecyclerViewWhenNeeded(it)  // Call scroll method to scroll when needed
+                        }
+                        true
+                    }
+
                     else -> false
                 }
             }
@@ -194,5 +203,27 @@ class AdapterCard(
             is CombinedItem.DepositItem -> VIEW_TYPE_DEPOSIT
             else -> throw IllegalStateException("Incorrect ViewType found")
         }
+
+    private fun scrollRecyclerViewWhenNeeded(viewHolder: RecyclerView.ViewHolder) {
+        val itemView = viewHolder.itemView
+        val location = IntArray(2)
+        itemView.getLocationOnScreen(location)
+
+        // Get screen height
+        val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+
+        // Threshold distance from the top or bottom to start scrolling
+        val scrollThreshold = 400
+
+        // Scroll if dragging near the top of the screen
+        if (location[1] < scrollThreshold) {
+            recyclerView.smoothScrollBy(0, -60)  // Scroll up
+        }
+
+        // Scroll if dragging near the bottom of the screen
+        if (location[1] + itemView.height > screenHeight - scrollThreshold) {
+            recyclerView.smoothScrollBy(0, 60)  // Scroll down
+        }
+    }
 
 }

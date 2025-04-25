@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import kz.draganddrop.data.Card
 import kz.draganddrop.data.CardTypeEnums
 import kz.draganddrop.data.CombinedItem
 import kz.draganddrop.databinding.ActivityMainBinding
-import kz.draganddrop.utils.DragItemTouchHelperCallback
 import kz.draganddrop.utils.RecyclerViewItemClickCallback
 
 class MainActivity : AppCompatActivity(), RecyclerViewItemClickCallback {
@@ -24,7 +22,7 @@ class MainActivity : AppCompatActivity(), RecyclerViewItemClickCallback {
         val view = binding.root
         setContentView(view)
 
-        adapter = AdapterCard(this)
+        adapter = AdapterCard(this, binding.recyclerView)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
@@ -49,12 +47,6 @@ class MainActivity : AppCompatActivity(), RecyclerViewItemClickCallback {
                 amount = "10 000 000"
             )
         }
-//        val touchHelperCard = ItemTouchHelper(
-//            DragItemTouchHelperCallback(
-//                binding.recyclerView,
-//                binding.nestedScrollView
-//            )
-//        )
 
         val items = mutableListOf<CombinedItem>()
 
@@ -64,7 +56,6 @@ class MainActivity : AppCompatActivity(), RecyclerViewItemClickCallback {
         items += CombinedItem.Header("Deposits")
         items += listDeposits.map { CombinedItem.DepositItem(it) }
 
-//        touchHelperCard.attachToRecyclerView(binding.recyclerView)
         adapter.submitList(items)
     }
 
