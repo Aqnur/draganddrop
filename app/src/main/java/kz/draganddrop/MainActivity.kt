@@ -9,6 +9,7 @@ import kz.draganddrop.data.Card
 import kz.draganddrop.data.CardTypeEnums
 import kz.draganddrop.data.CombinedItem
 import kz.draganddrop.databinding.ActivityMainBinding
+import kz.draganddrop.utils.MarginItemDecoration
 import kz.draganddrop.utils.RecyclerViewItemClickCallback
 
 class MainActivity : AppCompatActivity(), RecyclerViewItemClickCallback {
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity(), RecyclerViewItemClickCallback {
         adapter = AdapterCard(this, binding.recyclerView)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.addItemDecoration(MarginItemDecoration(16))
         binding.recyclerView.adapter = adapter
 
         initList()
